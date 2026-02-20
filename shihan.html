@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>給妳的生日小宇宙</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 網頁字體，可依喜好更換 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: "Noto Serif TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #3c3b6e 0, #090909 50%, #000000 100%);
+      color: #f7f3f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      overflow-y: auto; /* 允許垂直滾動 */
+      scrollbar-color: #111111 rgba(255, 255, 255, 0.08); /* Firefox：滑桿顏色 / 軌道顏色 */
+    }
+
+    /* 自訂滾輪樣式（Chrome / Edge / Safari 等 WebKit 系列） */
+    body::-webkit-scrollbar,
+    #memory-view::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    body::-webkit-scrollbar-track,
+    #memory-view::-webkit-scrollbar-track {
+      background: #000000;
+    }
+
+    body::-webkit-scrollbar-thumb,
+    #memory-view::-webkit-scrollbar-thumb {
+      background: #202020;
+      border-radius: 999px;
+    }
+
+    body::-webkit-scrollbar-thumb:hover,
+    #memory-view::-webkit-scrollbar-thumb:hover {
+      background: #333333;
+    }
+
+    /* 背景柔和浮動光點 */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.22) 0, transparent 50%),
+        radial-gradient(circle at 80% 10%, rgba(255, 192, 203, 0.18) 0, transparent 55%),
+        radial-gradient(circle at 80% 80%, rgba(135, 206, 250, 0.18) 0, transparent 55%);
+      mix-blend-mode: screen;
+      animation: floatGlow 18s ease-in-out infinite alternate;
+      opacity: 0.7;
+    }
+    @keyframes floatGlow {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      50%  { transform: translate3d(-10px, -10px, 0) scale(1.03); }
+      100% { transform: translate3d(10px, 10px, 0) scale(1.05); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: min(720px, 92vw);
+      border-radius: 28px;
+      padding: 32px 26px;
+      background: rgba(10, 10, 16, 0.72);
+      backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.75),
+        0 0 80px rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+    }
+
+    /* 上方細線與小標籤 */
+    .ribbon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(247, 243, 240, 0.72);
+      margin-bottom: 14px;
+    }
+    .ribbon-line {
+      width: 32px;
+      height: 1px;
+      background: linear-gradient(to right, rgba(247,243,240,0.1), rgba(247,243,240,0.7));
+    }
+
+    /* 密碼區塊 */
+    #lock-screen {
+      text-align: center;
+      animation: fadeInUp 0.7s ease-out;
+    }
+
+    #lock-screen h1 {
+      font-size: clamp(26px, 4vw, 32px);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      color: #f9f5f0;
+    }
+
+    #lock-screen p.subtitle {
+      font-size: 14px;
+      color: rgba(247, 243, 240, 0.7);
+      margin-bottom: 26px;
+    }
+
+    .password-box {
+      margin: 24px auto 4px;
+      width: min(320px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .password-input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(0, 0, 0, 0.45);
+      color: #f7f3f0;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    }
+    .password-input::placeholder {
+      color: rgba(247, 243, 240, 0.45);
+    }
+    .password-input:focus {
+      border-color: #ffb6c1;
+      box-shadow: 0 0 0 1px rgba(255, 182, 193, 0.45);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .btn {
+      cursor: pointer;
+      border-radius: 999px;
+      border: none;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, opacity 0.18s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ffb6c1, #f08080);
+      color: #201516;
+      box-shadow:
+        0 8px 22px rgba(240, 128, 128, 0.45),
+        0 0 12px rgba(255, 182, 193, 0.45);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 12px 30px rgba(240, 128, 128, 0.6),
+        0 0 14px rgba(255, 182, 193, 0.7);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow:
+        0 6px 18px rgba(240, 128, 128, 0.4),
+        0 0 10px rgba(255, 182, 193, 0.5);
+    }
+
+    .hint {
+      font-size: 12px;
+      color: rgba(247, 243, 240, 0.6);
+      margin-top: 2px;
+    }
+    .error {
+      font-size: 12px;
+      color: #ff8a8a;
+      margin-top: 4px;
+      min-height: 18px;
+    }
+
+    /* 主內容區塊（解鎖後） */
+    #main-content {
+      display: none;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .headline {
+      font-size: clamp(30px, 4.4vw, 38px);
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .headline span.accent {
+      background: linear-gradient(135deg, #ffb6c1, #f0e68c);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .date-line {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: rgba(247,243,240,0.7);
+      margin-bottom: 18px;
+    }
+
+    .message {
+      font-size: 15px;
+      line-height: 1.9;
+      color: rgba(247, 243, 240, 0.9);
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    .tagline {
+      margin-top: 22px;
+      font-size: 13px;
+      color: rgba(247,243,240,0.7);
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    /* 回憶錄畫面 */
+    #memory-view {
+      display: none;
+      animation: fadeInUp 0.8s ease-out;
+      max-height: 60vh;        /* 最多佔視窗高度 60% */
+      overflow-y: auto;        /* 若內容太多就出現垂直滾輪 */
+      padding-right: 4px;      /* 保留一點空間給滾動條 */
+    }
+
+    .memory-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .memory-title {
+      font-size: clamp(22px, 3.4vw, 26px);
+    }
+
+    .memory-title span.accent {
+      background: linear-gradient(135deg, #ffb6c1, #f0e68c);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(247, 243, 240, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding-inline: 16px;
+    }
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+    }
+
+    .memory-intro {
+      font-size: 14px;
+      color: rgba(247, 243, 240, 0.8);
+      margin-bottom: 18px;
+      line-height: 1.8;
+    }
+
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .memory-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6);
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+    }
+
+    .memory-card img,
+    .memory-card video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .memory-card::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.58);
+      color: rgba(247, 243, 240, 0.95);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .memory-card:hover img,
+    .memory-card:hover video {
+      transform: scale(1.05);
+    }
+
+    .memory-note {
+      margin-top: 18px;
+      font-size: 12px;
+      color: rgba(247, 243, 240, 0.7);
+    }
+
+    /* 底部小資訊區 */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 32px;
+      font-size: 11px;
+      color: rgba(247, 243, 240, 0.55);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 6px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ffb6c1;
+      box-shadow: 0 0 8px rgba(255, 182, 193, 0.9);
+    }
+
+    /* 音樂控制提示 */
+    .audio-hint {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    /* 漸入動畫 */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 14px, 0);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    /* 手機：螢幕寬度小於等於 600px */
+    @media (max-width: 600px) {
+      body {
+        align-items: flex-start;
+      }
+      .container {
+        margin: 16px 0;
+        width: 100vw;
+        border-radius: 0;
+        padding: 20px 14px 18px;
+      }
+      .headline {
+        font-size: 22px;
+      }
+      /* 手機版：回憶錄改成整頁高度，由整個畫面捲動 */
+      #memory-view {
+        max-height: none;
+        overflow-y: visible;
+        padding-right: 0;
+      }
+      .memory-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      /* 手機版：讓「打開我們的回憶錄」按鈕靠右側 */
+      #open-memory-btn {
+        align-self: flex-end;
+        margin-top: 6px;
+      }
+    }
+
+    /* 平板：螢幕寬度介於 601px ~ 1024px */
+    @media (min-width: 601px) and (max-width: 1024px) {
+      .container {
+        width: min(840px, 94vw);
+        padding: 28px 26px;
+      }
+      .memory-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    /* 電腦：大於 1024px，可稍微放寬內容寬度 */
+    @media (min-width: 1025px) {
+      .container {
+        width: min(880px, 72vw);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <div class="container">
+    <!-- 鎖定畫面 / 密碼區 -->
+    <div id="lock-screen">
+      <div class="ribbon">
+        <div class="ribbon-line"></div>
+        <span>BIRTHDAY • PRIVATE PAGE</span>
+      </div>
+      <h1>小小秘密，只為妳開啟</h1>
+      <p class="subtitle">輸入我們約定好的那個小密碼，解鎖屬於妳的一點點溫柔宇宙。</p>
+
+      <div class="password-box">
+        <input
+          type="password"
+          id="password-input"
+          class="password-input"
+          autocomplete="off"
+          placeholder="在這裡輸入密碼"
+        />
+        <button class="btn btn-primary" id="unlock-btn">
+          解鎖
+          <span style="font-size: 14px;">↗</span>
+        </button>
+        <div class="hint">小提示：可以用你們之間有意義的日期或暱稱。</div>
+        <div class="error" id="error-text"></div>
+      </div>
+    </div>
+
+    <!-- 主要內容（解鎖後顯示） -->
+    <div id="main-content">
+      <div class="ribbon">
+        <div class="ribbon-line"></div>
+        <span>HAPPY BIRTHDAY TO YOU</span>
+      </div>
+
+      <div class="date-line">2026 · special edition for you</div>
+
+      <div class="headline">
+        親愛的 <span class="accent">妳</span>，<br/>
+        歡迎來到只屬於妳的夜空。
+      </div>
+
+      <p class="message">
+在這個被標記成「妳降臨世界」的日子，
+我想留一個小小的角落，只寫給妳看。
+
+謝謝妳一直都在(不要再吃小倪醋了)
+在我煩惱的訊息裡、在深夜的電話裡、
+在那些沒說出口但妳就是懂的沉默裡。
+
+願妳以後的每一歲，
+都能更喜歡現在這個正在成長的自己。
+願妳被溫柔對待，也被世界溫柔擁抱。
+
+如果有一天妳覺得累了、被世界吵得煩了，
+記得這裡隨時都會亮著，
+像一盞只為妳而存在的小小路燈。
+
+最重要的要找到有錢工程師再養我一輩子 ♡
+
+生日快樂，我的宇宙限定小寶貝。♡
+      </p>
+
+      <div class="tagline">
+        ALWAYS ON YOUR SIDE · FROM ME TO YOU
+      </div>
+
+      <div class="footer">
+        <div class="chip">
+          <span class="dot"></span>
+          <span>背景音樂已為妳準備好</span>
+        </div>
+        <div class="audio-hint">
+          如果沒聽到音樂，那我也沒辦法哈哈哈
+        </div>
+        <button class="btn btn-ghost" id="open-memory-btn">
+          打開我們的回憶錄
+        </button>
+      </div>
+    </div>
+
+    <!-- 回憶錄畫面 -->
+    <div id="memory-view">
+      <div class="memory-header">
+        <div>
+          <div class="ribbon">
+            <div class="ribbon-line"></div>
+            <span>OUR LITTLE ARCHIVE</span>
+          </div>
+          <div class="memory-title">
+            妳和我<span class="accent">的時間拼圖</span>
+          </div>
+        </div>
+        <button class="btn btn-ghost" id="back-to-main-btn">
+          返回祝福頁
+        </button>
+      </div>
+
+      <p class="memory-intro">
+        這裡放的是我很喜歡的幾個小片段，<br/>
+        有模糊、太暗、太醜、太智障，但都是真實的我們。
+      </p>
+
+      <div class="memory-grid">
+        <!-- 相片範例：請把 src 換成妳自己的圖片路徑 -->
+         <div class="memory-card" data-label="PHOTO ·  好久沒喝吳家了">
+          <img src="C:\Users\User\Desktop\shihan\詩/01.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 2">
+          <img src="C:\Users\User\Desktop\shihan\詩/02.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 3">
+          <img src="C:\Users\User\Desktop\shihan\詩/03.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 4">
+          <img src="C:\Users\User\Desktop\shihan\詩/04.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 5">
+          <img src="C:\Users\User\Desktop\shihan\詩/05.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 6">
+          <img src="C:\Users\User\Desktop\shihan\詩/06.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 7">
+          <img src="C:\Users\User\Desktop\shihan\詩/07.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 8">
+          <img src="C:\Users\User\Desktop\shihan\詩/08.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 9">
+          <img src="C:\Users\User\Desktop\shihan\詩/09.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 10">
+          <img src="C:\Users\User\Desktop\shihan\詩/10.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 11">
+          <img src="C:\Users\User\Desktop\shihan\詩/11.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 12">
+          <img src="C:\Users\User\Desktop\shihan\詩/12.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 13">
+          <img src="C:\Users\User\Desktop\shihan\詩/13.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · LAUGH">
+          <img src="C:\Users\User\Desktop\shihan\詩/14.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · LAUGH">
+          <img src="C:\Users\User\Desktop\shihan\詩/15.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · LAUGH">
+          <img src="C:\Users\User\Desktop\shihan\詩/16.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · LAUGH">
+          <img src="C:\Users\User\Desktop\shihan\詩/17.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · LAUGH">
+          <img src="C:\Users\User\Desktop\shihan\詩/18.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · LAUGH">
+          <img src="C:\Users\User\Desktop\shihan\詩/19.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · smoke bad">
+          <img src="C:\Users\User\Desktop\shihan\詩/20.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · breakfast">
+          <img src="C:\Users\User\Desktop\shihan\詩/21.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · LAUGH">
+          <img src="C:\Users\User\Desktop\shihan\詩/22.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 哦?一起畢業了">
+          <img src="C:\Users\User\Desktop\shihan\詩/23.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · LAUGH">
+          <img src="C:\Users\User\Desktop\shihan\詩/24.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · happy birthday to me">
+          <img src="C:\Users\User\Desktop\shihan\詩/25.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · sugar daddy">
+          <img src="C:\Users\User\Desktop\shihan\詩/26.jpg" >
+        </div>
+
+        <!-- 影片範例：請把 src 換成妳自己的影片路徑 -->
+        <div class="memory-card" data-label="VIDEO · SHORT ">
+          <video src="C:\Users\User\Desktop\shihan\詩/V01.mp4" muted loop playsinline autoplay></video>
+        </div>
+        <div class="memory-card" data-label="VIDEO · SHORT ">
+          <video src="C:\Users\User\Desktop\shihan\詩/V02.mp4" muted loop playsinline autoplay></video>
+        </div>
+                <div class="memory-card" data-label="VIDEO · SHORT ">
+          <video src="C:\Users\User\Desktop\shihan\詩/V03.mp4" muted loop playsinline autoplay></video>
+        </div>
+
+      </div>
+
+      <div class="memory-note">
+         好多照片哦  
+      </div>
+    </div>
+  </div>
+
+  <!-- 背景音樂：請把 src 換成妳自己的音樂網址或本機檔案路徑 -->
+  <audio id="bg-music" loop>
+    <!-- 例如：<source src="music/your-song.mp3" type="audio/mpeg" /> -->
+    <source src="C:\Users\User\Desktop\shihan\G-DRAGON - '무제.mp3" type="audio/mpeg" />
+    您的瀏覽器不支援 audio 標籤。
+  </audio>
+
+  <script>
+    // 在這裡設定妳要的密碼
+    const CORRECT_PASSWORD = "0219"; // ← 改成妳跟閨蜜的專屬密碼
+
+    const passwordInput = document.getElementById("password-input");
+    const unlockBtn = document.getElementById("unlock-btn");
+    const errorText = document.getElementById("error-text");
+    const lockScreen = document.getElementById("lock-screen");
+    const mainContent = document.getElementById("main-content");
+    const memoryView = document.getElementById("memory-view");
+    const bgMusic = document.getElementById("bg-music");
+    if (bgMusic) {
+      bgMusic.volume = 0.3; // 將音量設為 30%
+    }
+    const openMemoryBtn = document.getElementById("open-memory-btn");
+    const backToMainBtn = document.getElementById("back-to-main-btn");
+
+    function unlock() {
+      const value = (passwordInput.value || "").trim();
+      if (!value) {
+        errorText.textContent = "先輸入點什麼吧：）";
+        return;
+      }
+      if (value === CORRECT_PASSWORD) {
+        errorText.textContent = "";
+        // 切換畫面
+        lockScreen.style.display = "none";
+        mainContent.style.display = "block";
+        // 嘗試播放背景音樂（部分瀏覽器可能需要互動後才允許）
+        bgMusic.play().catch(() => {
+          // 如果被禁止自動播放，就不顯示錯誤，只靜靜地失敗即可
+          console.log("Autoplay was blocked, user may need to tap play.");
+        });
+      } else {
+        errorText.textContent = "這個密碼好像不太對，再想想看？";
+        passwordInput.value = "";
+        passwordInput.focus();
+      }
+    }
+
+    unlockBtn.addEventListener("click", unlock);
+    passwordInput.addEventListener("keyup", (e) => {
+      if (e.key === "Enter") {
+        unlock();
+      }
+    });
+
+    if (openMemoryBtn && backToMainBtn) {
+      openMemoryBtn.addEventListener("click", () => {
+        mainContent.style.display = "none";
+        memoryView.style.display = "block";
+      });
+
+      backToMainBtn.addEventListener("click", () => {
+        memoryView.style.display = "none";
+        mainContent.style.display = "block";
+      });
+    }
+  </script>
+</body>
+</html>
