@@ -107,6 +107,28 @@
       animation: fadeInUp 0.7s ease-out;
     }
 
+    .avatar-wrap {
+      width: 128px;
+      height: 128px;
+      border-radius: 999px;
+      margin: 0 auto 14px;
+      padding: 3px;
+      background: linear-gradient(135deg, rgba(255, 182, 193, 0.9), rgba(240, 230, 140, 0.65), rgba(135, 206, 250, 0.55));
+      box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.65),
+        0 0 26px rgba(255, 182, 193, 0.22);
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      object-fit: cover;
+      display: block;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.28);
+    }
+
     #lock-screen h1 {
       font-size: clamp(26px, 4vw, 32px);
       letter-spacing: 0.12em;
@@ -400,6 +422,11 @@
         border-radius: 0;
         padding: 20px 14px 18px;
       }
+      .avatar-wrap {
+        width: 110px;
+        height: 110px;
+        margin-bottom: 10px;
+      }
       .headline {
         font-size: 22px;
       }
@@ -448,6 +475,10 @@
   <div class="container">
     <!-- 鎖定畫面 / 密碼區 -->
     <div id="lock-screen">
+      <div class="avatar-wrap">
+        <!-- 把 src 換成妳要的大頭貼照片路徑 -->
+        <img class="avatar" src="詩/27.jpg" alt="大頭貼">
+      </div>
       <div class="ribbon">
         <div class="ribbon-line"></div>
         <span>BIRTHDAY • PRIVATE PAGE</span>
@@ -627,7 +658,65 @@
         <div class="memory-card" data-label="PHOTO · sugar daddy">
           <img src="\詩/26.jpg" >
         </div>
+        <div class="memory-card" data-label="PHOTO · rock">
+          <img src="\詩/27.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · sing song">
+          <img src="\詩/28.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · im sad">
+          <img src="\詩/29.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · im sad">
+          <img src="\詩/30.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · LAUGH">
+          <img src="\詩/31.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · G-DRAGON">
+          <img src="\詩/32.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 吵架了">
+          <img src="\詩/33.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 小鳥">
+          <img src="\詩/34.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 又吵架了">
+          <img src="\詩/35.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 框小姐">
+          <img src="\詩/36.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 紅牌">
+          <img src="\詩/37.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 這天很開心">
+          <img src="\詩/38.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 很放鬆">
+          <img src="\詩/39.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 因為有妳">
+          <img src="\詩/40.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 妳感覺也滿開心的">
+          <img src="\詩/41.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 或許吧">
+          <img src="\詩/42.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 自己的包包不背">
+          <img src="\詩/43.jpg" >
+        </div>
+        <div class="memory-card" data-label="PHOTO · 講開了，也遠了">
+          <img src="\詩/44.jpg" >
+        </div>
 
+
+        <div class="memory-card" data-label="PHOTO · sugar daddy">
+          <img src="\詩/99.jpg" >
+        </div>
         <!-- 影片範例：請把 src 換成妳自己的影片路徑 -->
         <div class="memory-card" data-label="VIDEO · SHORT ">
           <video src="詩/V01.mp4" muted loop playsinline autoplay></video>
@@ -635,8 +724,11 @@
         <div class="memory-card" data-label="VIDEO · SHORT ">
           <video src="\詩/V02.mp4" muted loop playsinline autoplay></video>
         </div>
-                <div class="memory-card" data-label="VIDEO · SHORT ">
+        <div class="memory-card" data-label="VIDEO · SHORT ">
           <video src="\詩/V03.mp4" muted loop playsinline autoplay></video>
+        </div>
+        <div class="memory-card" data-label="VIDEO · SHORT ">
+          <video src="\詩/V04.mp4" muted loop playsinline autoplay></video>
         </div>
 
       </div>
